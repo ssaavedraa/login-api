@@ -13,7 +13,7 @@ export class UserControllerImpl implements UserController {
 
       return res.status(201).send(result)
     } catch (error) {
-      console.log(`[UserController]: ${error}`)
+      console.error(`[UserController]: ${JSON.stringify(error)}`)
       next(error)
     }
   }

@@ -16,7 +16,7 @@ export class Server {
   }
 
   listen () {
-    this.app.listen(this.port, () => console.log('Server listening at ', this.port))
+    this.app.listen(this.port, () => console.debug('Server listening at ', this.port))
   }
 
   useRouter () {
