@@ -1,10 +1,11 @@
-import express from 'express'
+import dotenv from 'dotenv'
 
-const app = express()
-const port = 3000
+import { Server } from './server/server'
 
-app.get('/', (_, res) => {
-  res.send('test')
-})
+dotenv.config()
 
-app.listen(port, () => console.log(`Server running at port: ${port}`))
+const server = new Server()
+
+server.useRouter()
+server.useErrorMiddleware()
+server.listen()
