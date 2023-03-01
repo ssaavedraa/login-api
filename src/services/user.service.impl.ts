@@ -1,9 +1,9 @@
 import { PrismaClient, Role } from '@prisma/client'
 
 import { hashData } from '../utils/hash'
-import { BadRequestException } from '../httpExceptions/badRequest.exception'
 import { UserService } from './user.service'
 import { CreateUserDto } from './../validators/user.create.validator'
+import { InternalServerErrorException } from '../httpExceptions/InternalServer.exception'
 
 export class UserServiceImpl implements UserService {
   private prismaClient: PrismaClient
@@ -28,7 +28,7 @@ export class UserServiceImpl implements UserService {
     } catch (error) {
       console.error(`[CreateUser]:  ${error}`)
 
-      throw new BadRequestException(error)
+      throw new InternalServerErrorException(error)
     }
   }
 }
