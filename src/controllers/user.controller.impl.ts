@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express'
-import { Role } from '@prisma/client'
 
 import { UserController } from './user.controller'
 import { userService } from '../services/index'
@@ -9,7 +8,7 @@ export class UserControllerImpl implements UserController {
     try {
       const { body } = req
 
-      const result = await userService.createUser(body, Role.USER)
+      const result = await userService.createUser(body)
 
       return res.status(201).send(result)
     } catch (error) {
