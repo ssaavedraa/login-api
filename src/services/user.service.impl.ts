@@ -13,7 +13,7 @@ export class UserServiceImpl implements UserService {
     this.prismaClient = new PrismaClient()
   }
 
-  async createUser ({ email, password }: CreateUserDto, role: Role): Promise<string> {
+  async createUser ({ email, password, role = Role.USER }: CreateUserDto): Promise<string> {
     try {
       const hashedPassword = hashData(password)
 
