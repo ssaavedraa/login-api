@@ -4,6 +4,7 @@ import { hashData } from '../utils/hash'
 import { UserService } from './user.service'
 import { CreateUserDto } from './../validators/user.create.validator'
 import { InternalServerErrorException } from '../httpExceptions/InternalServer.exception'
+import { BadRequestException } from '../httpExceptions/badRequest.exception'
 
 export class UserServiceImpl implements UserService {
   private prismaClient: PrismaClient
@@ -30,5 +31,19 @@ export class UserServiceImpl implements UserService {
 
       throw new InternalServerErrorException(error)
     }
+  }
+
+  async findUserByEmail (email: string): Promise<boolean> {
+    const user = await this.prismaClient.user.findUnique({
+      where: {
+        email
+      }
+    })
+
+    if (user) {
+      throw new BadRequestException('User already exists')
+    }
+
+    return !!user
   }
 }

@@ -17,4 +17,17 @@ export class UserControllerImpl implements UserController {
       next(error)
     }
   }
+
+  public async checkIfUserExists (req: Request, res: Response, next: NextFunction): Promise<Response> {
+    try {
+      const { email } = req.query
+
+      const result = await userService.findUserByEmail(`${email}`)
+
+      return res.send(result)
+    } catch (error) {
+      console.error(`[UserController]: ${JSON.stringify(error)}`)
+      next(error)
+    }
+  }
 }

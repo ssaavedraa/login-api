@@ -7,5 +7,6 @@ import { ValidationMiddleware } from './../middlewares/validation.middleware'
 const userRouter = Router()
 
 userRouter.post('/', ValidationMiddleware(CreateUserDto), userController.createUser)
+userRouter.get('/', userController.checkIfUserExists)
 
 export default userRouter
