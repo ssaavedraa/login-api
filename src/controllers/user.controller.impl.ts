@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
 import { UserController } from './user.controller'
-import { userService } from '../services/index'
+import { userService } from '../services/index' // create new instance of service in contructor
 
 export class UserControllerImpl implements UserController {
   public async createUser (req: Request, res: Response, next: NextFunction): Promise<Response> {
