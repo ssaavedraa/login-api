@@ -1,4 +1,5 @@
 import { PrismaClient, Role } from '@prisma/client'
+import { sign } from 'jsonwebtoken'
 
 import { hashData } from '../utils/hash'
 import { UserService } from './user.service'
@@ -13,19 +14,34 @@ export class UserServiceImpl implements UserService {
     this.prismaClient = new PrismaClient()
   }
 
-  async createUser ({ email, password, role = Role.USER }: CreateUserDto): Promise<string> {
+  async createUser ({ email, password, role = Role.USER }: CreateUserDto): Promise<{accessToken: string, refreshToken: string}> {
     try {
-      const hashedPassword = hashData(password)
+      const accessToken = sign({ email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' })
+      const refreshToken = sign({ email }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1h' })
 
-      await this.prismaClient.user.create({
+      const hashedPassword = hashData(password)
+      const hashedRefreshToken = hashData(refreshToken)
+
+      console.log({ accessToken, refreshToken })
+
+      const test = await this.prismaClient.user.create({
         data: {
           email,
           role,
-          password: hashedPassword
+          password: hashedPassword,
+          refreshToken: hashedRefreshToken
+        },
+        select: {
+          refreshToken: true
         }
       })
 
-      return 'Welcome to hex!'
+      console.log(test)
+
+      return {
+        accessToken,
+        refreshToken
+      }
     } catch (error) {
       console.error(`[CreateUser]:  ${error}`)
 
