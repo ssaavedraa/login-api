@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
-import { JwtPayload, verify } from 'jsonwebtoken'
+import { verify } from 'jsonwebtoken'
+
 import { ForbiddenExcception } from '../httpExceptions/forbidden.exception'
 import { UnauthorizedException } from '../httpExceptions/unauthorized.exception'
 
@@ -12,12 +13,10 @@ export function authMiddleware (req: Request, res: Response, next: NextFunction)
 
   const token = authHeader.split(' ')[1]
 
-  verify(token, process.env.ACCESS_TOKEN_SECRET, (error, decoded) => {
+  verify(token, process.env.ACCESS_TOKEN_SECRET, (error: any, decoded: { email: Promise<any>; }) => {
     if (error) {
       throw new ForbiddenExcception('Invalid access Token')
     }
-
-    console.log((decoded as JwtPayload).email)
 
     next()
   })
