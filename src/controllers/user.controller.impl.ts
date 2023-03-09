@@ -8,9 +8,19 @@ export class UserControllerImpl implements UserController {
     try {
       const { body } = req
 
-      const result = await userService.createUser(body)
+      const { accessToken, refreshToken } = await userService.createUser(body)
 
-      return res.status(201).send(result)
+      return res
+        .cookie(
+          'refreshToken',
+          refreshToken,
+          {
+            httpOnly: true,
+            maxAge: 60 * 60 * 1000
+          }
+        )
+        .status(201)
+        .send({ accessToken })
     } catch (error) {
       console.error(`[UserController]: ${JSON.stringify(error)}`)
       next(error)
