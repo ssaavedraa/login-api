@@ -1,5 +1,5 @@
-import { PrismaClient, Role } from '@prisma/client'
 import { sign } from 'jsonwebtoken'
+import { PrismaClient, Role } from '@prisma/client'
 
 import { hashData } from '../utils/hash'
 import { UserService } from './user.service'
@@ -14,29 +14,25 @@ export class UserServiceImpl implements UserService {
     this.prismaClient = new PrismaClient()
   }
 
-  async createUser ({ email, password, role = Role.USER }: CreateUserDto): Promise<{accessToken: string, refreshToken: string}> {
+  public async createUser ({ email, password, role = Role.USER }: CreateUserDto): Promise<{accessToken: string, refreshToken: string}> {
     try {
       const accessToken = sign({ email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' })
       const refreshToken = sign({ email }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1h' })
 
       const hashedPassword = hashData(password)
-      const hashedRefreshToken = hashData(refreshToken)
+      // const hashedRefreshToken = hashData(refreshToken)
 
-      console.log({ accessToken, refreshToken })
-
-      const test = await this.prismaClient.user.create({
+      await this.prismaClient.user.create({
         data: {
           email,
           role,
-          password: hashedPassword,
-          refreshToken: hashedRefreshToken
+          refreshToken,
+          password: hashedPassword
         },
         select: {
           refreshToken: true
         }
       })
-
-      console.log(test)
 
       return {
         accessToken,
@@ -49,7 +45,7 @@ export class UserServiceImpl implements UserService {
     }
   }
 
-  async findUserByEmail (email: string): Promise<boolean> {
+  public async findUserByEmail (email: string): Promise<boolean> {
     const user = await this.prismaClient.user.findUnique({
       where: {
         email
