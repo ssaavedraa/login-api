@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 
-import { RefreshTokenService } from './refreshToken.service'
 import { ForbiddenException } from '../httpExceptions/forbidden.exception'
-import { InternalServerErrorException } from '../httpExceptions/InternalServer.exception'
+import { InternalServerErrorException } from '../httpExceptions/internal.exception'
+import { RefreshTokenService } from './refreshToken.service'
 
 export class RefreshTokenServiceImpl implements RefreshTokenService {
   private prismaClient: PrismaClient

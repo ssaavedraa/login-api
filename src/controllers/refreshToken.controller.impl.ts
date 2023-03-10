@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import { decode, JwtPayload, sign } from 'jsonwebtoken'
 
-import { RefreshTokenController } from './refreshToken.controller'
 import { ForbiddenException } from '../httpExceptions/forbidden.exception'
 import { UnauthorizedException } from '../httpExceptions/unauthorized.exception'
+import { RefreshTokenController } from './refreshToken.controller'
 import { refreshTokenService } from '../services'
 
 export class RefreshTokenControllerImpl implements RefreshTokenController {

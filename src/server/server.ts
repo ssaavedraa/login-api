@@ -1,10 +1,10 @@
-import express, { Application, json } from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
+import express, { Application, json } from 'express'
 
+import { errorHandlerMiddleware } from '../middlewares/error.middleware'
 import userRouter from '../routes/user.routes'
 import authRouter from '../routes/auth.routes'
-import { errorHandlerMiddleware } from '../middlewares/error.middleware'
 
 export class Server {
   private app: Application

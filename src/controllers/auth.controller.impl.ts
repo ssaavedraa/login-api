@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express'
 import { sign } from 'jsonwebtoken'
-import { authService } from '../services'
 
 import { AuthController } from './auth.controller'
+import { authService } from '../services'
 
 export class AuthControllerImpl implements AuthController {
   public async login (req: Request, res: Response, next: NextFunction): Promise<Response> {

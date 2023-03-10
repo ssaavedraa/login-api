@@ -1,8 +1,9 @@
-import { BadRequestException } from '../httpExceptions/badRequest.exception'
-import { UserCredentials } from '../validators/user.credentials'
-import { AuthService } from './auth.service'
-import { userService } from './index'
 import { compareSync } from 'bcrypt'
+
+import { AuthService } from './auth.service'
+import { BadRequestException } from '../httpExceptions/badRequest.exception'
+import { userService } from './index'
+import { UserCredentials } from '../validators/user.credentials'
 
 export class AuthServiceImpl implements AuthService {
   public async validateCredentials (credentials: UserCredentials): Promise<string> {
