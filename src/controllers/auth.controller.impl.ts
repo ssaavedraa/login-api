@@ -20,6 +20,8 @@ export class AuthControllerImpl implements AuthController {
           refreshToken,
           {
             httpOnly: true,
+            sameSite: 'none',
+            secure: true,
             maxAge: 60 * 60 * 1000
           }
         )
