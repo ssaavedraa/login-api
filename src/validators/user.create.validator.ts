@@ -1,14 +1,8 @@
-import { IsEmail, IsString, IsOptional, IsEnum } from 'class-validator'
+import { IsString, IsOptional, IsEnum } from 'class-validator'
 import { Role } from '@prisma/client'
+import { UserCredentials } from './user.credentials'
 
-export class CreateUserDto {
-  @IsString()
-  @IsEmail()
-  public email: string
-
-  @IsString()
-  public password: string
-
+export class CreateUserDto extends UserCredentials {
   @IsString()
   @IsOptional()
   @IsEnum(Role)
