@@ -1,11 +1,11 @@
 import { sign } from 'jsonwebtoken'
-import { PrismaClient, Role } from '@prisma/client'
+import { PrismaClient, Role, User } from '@prisma/client'
 
 import { hashData } from '../utils/hash'
 import { UserService } from './user.service'
-import { CreateUserDto } from './../validators/user.create.validator'
 import { InternalServerErrorException } from '../httpExceptions/InternalServer.exception'
-import { BadRequestException } from '../httpExceptions/badRequest.exception'
+import { CreateUserDto } from '../validators/user.create.validator'
+import { NotFoundException } from '../httpExceptions/notFound.exception'
 
 export class UserServiceImpl implements UserService {
   private prismaClient: PrismaClient
@@ -45,17 +45,17 @@ export class UserServiceImpl implements UserService {
     }
   }
 
-  public async findUserByEmail (email: string): Promise<boolean> {
+  public async findUserByEmail (email: string): Promise<User> {
     const user = await this.prismaClient.user.findUnique({
       where: {
         email
       }
     })
 
-    if (user) {
-      throw new BadRequestException('User already exists')
+    if (!user) {
+      throw new NotFoundException('User already exists')
     }
 
-    return !!user
+    return user
   }
 }
