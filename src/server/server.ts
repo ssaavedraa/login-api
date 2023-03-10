@@ -3,6 +3,7 @@ import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 
 import userRouter from '../routes/user.routes'
+import authRouter from '../routes/auth.routes'
 import { errorHandlerMiddleware } from '../middlewares/error.middleware'
 
 export class Server {
@@ -23,6 +24,7 @@ export class Server {
 
   useRouter () {
     this.app.use('/', userRouter)
+    this.app.use('/auth', authRouter)
   }
 
   useErrorMiddleware () {
