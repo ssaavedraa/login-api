@@ -1,7 +1,8 @@
-import { PrismaClient } from '@prisma/client';
-import { RefreshTokenService } from "./refreshToken.service";
-import { ForbiddenExcception } from "../httpExceptions/forbidden.exception";
-import { InternalServerErrorException } from '../httpExceptions/InternalServer.exception';
+import { PrismaClient } from '@prisma/client'
+
+import { RefreshTokenService } from './refreshToken.service'
+import { ForbiddenException } from '../httpExceptions/forbidden.exception'
+import { InternalServerErrorException } from '../httpExceptions/InternalServer.exception'
 
 export class RefreshTokenServiceImpl implements RefreshTokenService {
   private prismaClient: PrismaClient
@@ -10,9 +11,9 @@ export class RefreshTokenServiceImpl implements RefreshTokenService {
     this.prismaClient = new PrismaClient()
   }
 
-  public async refreshToken(refreshToken: string): Promise<string> {
+  public async verifyToken (refreshToken: string): Promise<string> {
     try {
-      const email = await this.prismaClient.user.findFirst({
+      const user = await this.prismaClient.user.findFirst({
         where: {
           refreshToken: {
             has: refreshToken
@@ -23,13 +24,17 @@ export class RefreshTokenServiceImpl implements RefreshTokenService {
         }
       })
 
-      if (!email) {
-        throw new ForbiddenExcception('forbidden')
+      if (!user) {
+        throw new ForbiddenException('forbidden')
       }
 
-      return `${email}`
+      return user.email
     } catch (error) {
       console.error(`[RefreshToken]:  ${error}`)
+
+      if (error instanceof ForbiddenException) {
+        return JSON.stringify(error)
+      }
 
       throw new InternalServerErrorException(error)
     }

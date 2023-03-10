@@ -1,3 +1,3 @@
 export abstract class RefreshTokenService {
-  public abstract refreshToken(refreshToken: string): Promise<any>
+  public abstract verifyToken(refreshToken: string): Promise<any>
 }
