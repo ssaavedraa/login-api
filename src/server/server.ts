@@ -5,6 +5,7 @@ import express, { Application, json } from 'express'
 import { errorHandlerMiddleware } from '../middlewares/error.middleware'
 import userRouter from '../routes/user.routes'
 import authRouter from '../routes/auth.routes'
+import cors, { CorsOptions } from 'cors'
 
 export class Server {
   private app: Application
@@ -19,7 +20,7 @@ export class Server {
   }
 
   listen () {
-    this.app.listen(this.port, () => console.debug('Server listening at ', this.port))
+    this.app.listen(this.port, () => console.debug('Server listening at port: ', this.port))
   }
 
   useRouter () {
@@ -29,5 +30,9 @@ export class Server {
 
   useErrorMiddleware () {
     this.app.use(errorHandlerMiddleware)
+  }
+
+  useCors (corsOptions: CorsOptions) {
+    this.app.use(cors(corsOptions))
   }
 }
