@@ -8,7 +8,7 @@ import { UserCredentials } from '../validators/user.credentials.validator'
 const userRouter = Router()
 
 userRouter.post('/', ValidationMiddleware(CreateUserDto), userController.createUser)
-userRouter.get('/', userController.checkIfUserExists)
+userRouter.get('/', userController.findByEmail)
 userRouter.post('/login', ValidationMiddleware(UserCredentials), userController.login)
 userRouter.get('/refresh', refreshTokenController.refreshToken)
 
