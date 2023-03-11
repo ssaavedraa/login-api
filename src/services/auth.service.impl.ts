@@ -4,9 +4,10 @@ import { AuthService } from './auth.service'
 import { BadRequestException } from '../httpExceptions/badRequest.exception'
 import { userService } from './index'
 import { UserCredentials } from '../validators/user.credentials'
+import { Role } from '@prisma/client'
 
 export class AuthServiceImpl implements AuthService {
-  public async validateCredentials (credentials: UserCredentials): Promise<string> {
+  public async validateCredentials (credentials: UserCredentials): Promise<{email: string, role: Role}> {
     const user = await userService.findUserByEmail(credentials.email)
 
     if (!user) {
@@ -19,6 +20,9 @@ export class AuthServiceImpl implements AuthService {
       throw new BadRequestException('Wrong credentials')
     }
 
-    return user.email
+    return {
+      email: user.email,
+      role: user.role
+    }
   }
 }

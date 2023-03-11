@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from 'express'
-import { decode, JwtPayload, sign } from 'jsonwebtoken'
+import { decode, JwtPayload } from 'jsonwebtoken'
 
 import { ForbiddenException } from '../httpExceptions/forbidden.exception'
 import { UnauthorizedException } from '../httpExceptions/unauthorized.exception'
 import { RefreshTokenController } from './refreshToken.controller'
 import { refreshTokenService } from '../services'
+import { getNewTokenPair } from './../utils/jwt'
 
 export class RefreshTokenControllerImpl implements RefreshTokenController {
   public async refreshToken (req: Request, res: Response, next: NextFunction): Promise<Response> {
@@ -17,14 +18,14 @@ export class RefreshTokenControllerImpl implements RefreshTokenController {
 
       const refreshToken = cookies.refreshToken
 
-      const email = await refreshTokenService.verifyToken(refreshToken)
+      const { email, role } = await refreshTokenService.verifyToken(refreshToken)
       const decodedToken = decode(refreshToken) as JwtPayload
 
       if (email !== decodedToken?.email) {
         throw new ForbiddenException('Forbidden')
       }
 
-      const accessToken = sign({ email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' })
+      const { accessToken } = getNewTokenPair({ email, role })
 
       return res.send({ accessToken })
     } catch (error) {

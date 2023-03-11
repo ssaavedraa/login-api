@@ -1,11 +1,11 @@
 import { PrismaClient, Role, User } from '@prisma/client'
-import { sign } from 'jsonwebtoken'
 
 import { InternalServerErrorException } from '../httpExceptions/internal.exception'
 import { NotFoundException } from '../httpExceptions/notFound.exception'
 import { UserService } from './user.service'
 import { hashData } from '../utils/hash'
 import { CreateUserDto } from '../validators/user.create.validator'
+import { getNewTokenPair } from '../utils/jwt'
 
 export class UserServiceImpl implements UserService {
   private prismaClient: PrismaClient
@@ -16,8 +16,7 @@ export class UserServiceImpl implements UserService {
 
   public async createUser ({ email, password, role = Role.USER }: CreateUserDto): Promise<{accessToken: string, refreshToken: string}> {
     try {
-      const accessToken = sign({ email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' })
-      const refreshToken = sign({ email }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '1h' })
+      const { accessToken, refreshToken } = getNewTokenPair({ email, role })
 
       const hashedPassword = hashData(password)
 
