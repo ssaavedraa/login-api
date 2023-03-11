@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 
 import { userService } from '../services/index' // create new instance of service in contructor
 import { UserController } from './user.controller'
+import { getNewTokenPair } from '../utils/jwt'
 
 export class UserControllerImpl implements UserController {
   public async createUser (req: Request, res: Response, next: NextFunction): Promise<Response> {
@@ -36,6 +37,33 @@ export class UserControllerImpl implements UserController {
       return res.send(result)
     } catch (error) {
       console.error(`[UserController]: ${JSON.stringify(error)}`)
+      next(error)
+    }
+  }
+
+  public async login (req: Request, res: Response, next: NextFunction): Promise<Response> {
+    try {
+      const credentials = req.body
+
+      const { email, role } = await userService.validateCredentials(credentials)
+
+      const { accessToken, refreshToken } = getNewTokenPair({ email, role })
+
+      return res
+        .cookie(
+          'refreshToken',
+          refreshToken,
+          {
+            httpOnly: true,
+            sameSite: 'none',
+            secure: true,
+            maxAge: 60 * 60 * 1000
+          }
+        )
+        .status(201)
+        .send({ accessToken })
+    } catch (error) {
+      console.error(`[AuthController]: ${JSON.stringify(error)}`)
       next(error)
     }
   }

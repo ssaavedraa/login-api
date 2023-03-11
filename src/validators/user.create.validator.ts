@@ -1,7 +1,7 @@
 import { Role } from '@prisma/client'
 import { IsString, IsOptional, IsEnum } from 'class-validator'
 
-import { UserCredentials } from './user.credentials'
+import { UserCredentials } from './user.credentials.validator'
 
 export class CreateUserDto extends UserCredentials {
   @IsString()

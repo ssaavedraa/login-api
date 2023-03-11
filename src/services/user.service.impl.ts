@@ -1,11 +1,14 @@
 import { PrismaClient, Role, User } from '@prisma/client'
+import { compareSync } from 'bcrypt'
 
+import { BadRequestException } from '../httpExceptions/badRequest.exception'
 import { InternalServerErrorException } from '../httpExceptions/internal.exception'
 import { NotFoundException } from '../httpExceptions/notFound.exception'
 import { UserService } from './user.service'
 import { hashData } from '../utils/hash'
-import { CreateUserDto } from '../validators/user.create.validator'
 import { getNewTokenPair } from '../utils/jwt'
+import { CreateUserDto } from '../validators/user.create.validator'
+import { UserCredentials } from '../validators/user.credentials.validator'
 
 export class UserServiceImpl implements UserService {
   private prismaClient: PrismaClient
@@ -55,5 +58,24 @@ export class UserServiceImpl implements UserService {
     }
 
     return user
+  }
+
+  public async validateCredentials (credentials: UserCredentials): Promise<{email: string, role: Role}> {
+    const user = await this.findUserByEmail(credentials.email)
+
+    if (!user) {
+      throw new BadRequestException('Wrong credentials')
+    }
+
+    const passwordMatch = compareSync(credentials.password, user.password)
+
+    if (!passwordMatch) {
+      throw new BadRequestException('Wrong credentials')
+    }
+
+    return {
+      email: user.email,
+      role: user.role
+    }
   }
 }
