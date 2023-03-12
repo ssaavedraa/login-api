@@ -60,7 +60,17 @@ export class UserServiceImpl implements UserService {
     return user
   }
 
-  public async validateCredentials (credentials: UserCredentials): Promise<{email: string, role: Role}> {
+  public async findUserByRefreshToken (refreshToken: string): Promise<User> {
+    return await this.prismaClient.user.findFirst({
+      where: {
+        refreshToken: {
+          has: refreshToken
+        }
+      }
+    })
+  }
+
+  public async validateCredentials (credentials: UserCredentials): Promise<User> {
     const user = await this.findUserByEmail(credentials.email)
 
     if (!user) {
@@ -73,9 +83,17 @@ export class UserServiceImpl implements UserService {
       throw new BadRequestException('Wrong credentials')
     }
 
-    return {
-      email: user.email,
-      role: user.role
-    }
+    return user
+  }
+
+  public async updateUser (userData: User): Promise<void> {
+    await this.prismaClient.user.update({
+      data: {
+        ...userData
+      },
+      where: {
+        email: userData.email
+      }
+    })
   }
 }

@@ -45,9 +45,14 @@ export class UserControllerImpl implements UserController {
     try {
       const credentials = req.body
 
-      const { email, role } = await userService.validateCredentials(credentials)
+      const user = await userService.validateCredentials(credentials)
 
-      const { accessToken, refreshToken } = getNewTokenPair({ email, role })
+      const { accessToken, refreshToken } = getNewTokenPair({ email: user.email, role: user.role })
+
+      await userService.updateUser({
+        ...user,
+        refreshToken: [...user.refreshToken, refreshToken]
+      })
 
       return res
         .cookie(
@@ -55,15 +60,13 @@ export class UserControllerImpl implements UserController {
           refreshToken,
           {
             httpOnly: true,
-            sameSite: 'none',
-            secure: true,
             maxAge: 60 * 60 * 1000
           }
         )
         .status(201)
         .send({ accessToken })
     } catch (error) {
-      console.error(`[AuthController]: ${JSON.stringify(error)}`)
+      console.error(`[UserController]: ${JSON.stringify(error)}`)
       next(error)
     }
   }
