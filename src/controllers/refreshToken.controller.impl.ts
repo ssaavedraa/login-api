@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { decode, JwtPayload } from 'jsonwebtoken'
 
-import { ForbiddenException } from '../httpExceptions/forbidden.exception'
 import { UnauthorizedException } from '../httpExceptions/unauthorized.exception'
 import { RefreshTokenController } from './refreshToken.controller'
 import { refreshTokenService } from '../services'
@@ -13,17 +11,13 @@ export class RefreshTokenControllerImpl implements RefreshTokenController {
       const cookies = req.cookies
 
       if (!cookies?.refreshToken) {
-        throw new UnauthorizedException('Unauthorized')
+        throw new UnauthorizedException('Refresh token cookie not found')
       }
 
       const refreshToken = cookies.refreshToken
+      res.clearCookie('refreshToken', { httpOnly: true, sameSite: 'none', secure: true })
 
       const { email, role } = await refreshTokenService.verifyToken(refreshToken)
-      const decodedToken = decode(refreshToken) as JwtPayload
-
-      if (email !== decodedToken?.email) {
-        throw new ForbiddenException('Forbidden')
-      }
 
       const { accessToken } = getNewTokenPair({ email, role })
 
