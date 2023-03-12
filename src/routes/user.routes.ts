@@ -10,6 +10,6 @@ const userRouter = Router()
 userRouter.post('/', ValidationMiddleware(CreateUserDto), userController.createUser)
 userRouter.get('/', userController.findByEmail)
 userRouter.post('/login', ValidationMiddleware(UserCredentials), userController.login)
-userRouter.get('/refresh', refreshTokenController.refreshToken)
+userRouter.get('/token/refresh', refreshTokenController.refreshToken)
 
 export default userRouter
