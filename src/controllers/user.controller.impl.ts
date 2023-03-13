@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 
 import { userService } from '../services/index' // create new instance of service in contructor
 import { UserController } from './user.controller'
-import { getNewTokenPair } from '../utils/jwt'
+import { jwtUtilities } from '../utils/jwt'
 
 export class UserControllerImpl implements UserController {
   public async createUser (req: Request, res: Response, next: NextFunction): Promise<Response> {
@@ -47,7 +47,7 @@ export class UserControllerImpl implements UserController {
 
       const user = await userService.validateCredentials(credentials)
 
-      const { accessToken, refreshToken } = getNewTokenPair({ email: user.email, role: user.role })
+      const { accessToken, refreshToken } = jwtUtilities.getNewTokenPair({ email: user.email, role: user.role })
 
       await userService.updateUser({
         ...user,

@@ -6,7 +6,7 @@ import { InternalServerErrorException } from '../httpExceptions/internal.excepti
 import { NotFoundException } from '../httpExceptions/notFound.exception'
 import { UserService } from './user.service'
 import { hashData } from '../utils/hash'
-import { getNewTokenPair } from '../utils/jwt'
+import { jwtUtilities } from '../utils/jwt'
 import { CreateUserDto } from '../validators/user.create.validator'
 import { UserCredentials } from '../validators/user.credentials.validator'
 
@@ -19,7 +19,7 @@ export class UserServiceImpl implements UserService {
 
   public async createUser ({ email, password, role = Role.USER }: CreateUserDto): Promise<{accessToken: string, refreshToken: string}> {
     try {
-      const { accessToken, refreshToken } = getNewTokenPair({ email, role })
+      const { accessToken, refreshToken } = jwtUtilities.getNewTokenPair({ email, role })
 
       const hashedPassword = hashData(password)
 

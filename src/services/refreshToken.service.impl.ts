@@ -18,7 +18,7 @@ export class RefreshTokenServiceImpl implements RefreshTokenService {
     const decodedToken = decode(refreshToken) as JwtPayload
 
     if (!user) {
-      this.clearRefreshTokens(decodedToken.email)
+      this.clearRefreshToken(decodedToken.email, refreshToken)
       throw new ForbiddenException('Wrong token')
     }
 
@@ -32,12 +32,12 @@ export class RefreshTokenServiceImpl implements RefreshTokenService {
     }
   }
 
-  public async clearRefreshTokens (email: string): Promise<void> {
+  public async clearRefreshToken (email: string, refreshToken: string): Promise<void> {
     const user = await this.prismaClient.user.findUnique({
       where: { email }
     })
 
-    user.refreshToken = []
+    user.refreshToken.filter(storedRefreshToken => storedRefreshToken !== refreshToken)
 
     await this.prismaClient.user.update({
       where: {
